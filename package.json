@@ -1,0 +1,29 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "description": "recipie application",
+  "default": "index.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": " parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaku2252/Jonas-final-forkify-project.git"
+  },
+  "author": "Akash choudhary",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaku2252/Jonas-final-forkify-project/issues"
+  },
+  "homepage": "https://github.com/aaku2252/Jonas-final-forkify-project#readme",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.2.1",
+    "parcel": "^2.2.1",
+    "sass": "^1.49.7"
+  },
+  "dependencies": {
+    "core-js": "^3.21.0",
+    "regenerator-runtime": "^0.13.9"
+  }
+}
