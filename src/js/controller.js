@@ -1,4 +1,5 @@
 //original app url - https://forkify-v2.netlify.app/#5ed6604591c37cdc054bcd09
+// https://forkify-api.herokuapp.com/v2
 
 import * as model from './model.js';
 import recipeView from './view/recipeView.js';
@@ -10,16 +11,6 @@ import 'regenerator-runtime/runtime';
 
 const results = document.querySelector('.results');
 const pagination_btn = document.querySelector('.pagination');
-
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-// API for forkify app
-// https://forkify-api.herokuapp.com/v2
 
 const controlRecipes = async function () {
   try {
@@ -34,12 +25,13 @@ const controlRecipes = async function () {
     //rendering the recipe in the container
     recipeView.render(model.state.recipe);
   } catch (err) {
-    console.log(err);
+    recipeView.renderError();
   }
 };
-['hashchange', 'load'].forEach(ev =>
-  window.addEventListener(ev, controlRecipes)
-);
+function init() {
+  recipeView.addHandlerRender(controlRecipes);
+}
+init();
 
 //* rendering the recipe result
 //     results.insertAdjacentHTML(

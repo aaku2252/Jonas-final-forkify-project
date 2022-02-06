@@ -13,3 +13,7 @@ Jonas Js course final project
 search option
 pagination for more than 10 result
 render the selected result
+
+////////////////////////////////////////////////////////////////
+
+Used the MVC architecture to manage the whole code and files to neat and understandable code
