@@ -3,10 +3,10 @@ import { Fraction } from 'fractional';
 
 class RecipeView {
   #parentElement = document.querySelector('.recipe');
-  #data;
   #errorMsg = 'Could not find the dish, Please try another Recipe!';
   #successMsg = '';
 
+  #data;
   render(data) {
     this.#data = data;
     const markup = this.#generateMarkup();
@@ -104,9 +104,7 @@ class RecipeView {
           </div>
 
           <div class = "recipe__user-generated">
-            <svg>
-              <use href = "${icons}#icon-user"></use>
-            </svg>
+           
           </div>
           <button class = "btn--round">
           <svg    class = "">
@@ -150,7 +148,7 @@ class RecipeView {
            <use href  = "${icons}#icon-check"></use>
            </svg>
            <div  class = "recipe__quantity">${
-             new Fraction(rec.quantity).toString() || ''
+             rec.quantity !== null ? new Fraction(rec.quantity).toString() : ''
            }</div>
            <div  class = "recipe__description">
            <span class = "recipe__unit">${rec.unit || ''}</span>

@@ -3,24 +3,27 @@
 
 import * as model from './model.js';
 import recipeView from './view/recipeView.js';
-
-//polyfilling async await and other functions
+import searchView from './view/searchView.js';
+import resultView from './view/resultView.js';
+import paginationView from './view/paginationView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import { async } from 'regenerator-runtime';
 
-const results = document.querySelector('.results');
-const pagination_btn = document.querySelector('.pagination');
+if (module.hot) {
+  module.hot.accept();
+}
 
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
 
-    // if (!id) return;
+    if (!id) return;
     recipeView.loadingSpinner();
 
     //  1) loading recipe
-    await model.loadRecipe();
+    await model.loadRecipe(id);
 
     //rendering the recipe in the container
     recipeView.render(model.state.recipe);
@@ -28,40 +31,27 @@ const controlRecipes = async function () {
     recipeView.renderError();
   }
 };
+
+const controlSearchResults = async function () {
+  try {
+    const query = searchView.getQuery();
+    if (!query) resultView.renderError();
+    resultView.loadingSpinner();
+
+    await model.loadSearchResults(query);
+    resultView.render(model.loadItemPerPage());
+    paginationView.render(model.state.search);
+  } catch (err) {
+    console.log(err);
+  }
+};
+function controlPagination(page) {
+  resultView.render(model.loadItemPerPage(page));
+  paginationView.render(model.state.search);
+}
 function init() {
   recipeView.addHandlerRender(controlRecipes);
+  searchView.addHandlerRender(controlSearchResults);
+  paginationView.addHandlerRender(controlPagination);
 }
 init();
-
-//* rendering the recipe result
-//     results.insertAdjacentHTML(
-//       'afterbegin',
-//       `<li class="preview">
-//             <a      class = "preview__link preview__link--active" href = "#23456">
-//             <figure class = "preview__fig">
-//             <img    src   = "${recipe.image}" alt                      = "Test" />
-//               </figure>
-//               <div class = "preview__data">
-//               <h4  class = "preview__title">${recipe.title}</h4>
-//               <p   class = "preview__publisher">${recipe.publisher}</p>
-//               <div class = "preview__user-generated">
-//                   <svg>
-//                     <use href = "${icons}#icon-user"></use>
-//                   </svg>
-//                 </div>
-//               </div>
-//             </a>
-//           </li>`
-//     );
-//     pagination_btn.innerHTML = ` <button class="btn--inline pagination__btn--prev">
-//             <svg class = "search__icon">
-//             <use href  = "${icons}#icon-arrow-left" alt = "1"></use>
-//             </svg>
-//             <span>Page 1</span>
-//           </button>
-//           <button class = "btn--inline pagination__btn--next">
-//             <span>Page 3</span>
-//             <svg class = "search__icon">
-//             <use href  = "${icons}#icon-arrow-right"></use>
-//             </svg>
-//           </button>`;
