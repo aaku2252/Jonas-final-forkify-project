@@ -8,12 +8,46 @@ class RecipeView {
 
   #data;
   render(data) {
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      console.log('error in recipeView');
+      return this.renderError();
+    }
+
     this.#data = data;
     const markup = this.#generateMarkup();
     this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
+  //algorithm for updating the recipe data without re rendering the whole recipe
+  update(data) {
+    // if (!data || (Array.isArray(data) && data.length === 0)) {
+    //   console.log('error in recipeView');
+    //   return this.renderError();
+    // }
 
+    this.#data = data;
+    const newMarkup = this.#generateMarkup();
+    const newDom = document.createRange().createContextualFragment(newMarkup);
+    const newElement = Array.from(newDom.querySelectorAll('*'));
+    const curElement = Array.from(this.#parentElement.querySelectorAll('*'));
+
+    newElement.forEach((newEl, i) => {
+      const curEl = curElement[i];
+
+      if (
+        !newEl.isEqualNode(curEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
+        curEl.textContent = newEl.textContent;
+      }
+
+      if (!newEl.isEqualNode(curEl)) {
+        Array.from(newEl.attributes).forEach(attr => {
+          curEl.setAttribute(attr.name, attr.value);
+        });
+      }
+    });
+  }
   #clear() {
     this.#parentElement.innerHTML = '';
   }
@@ -55,7 +89,14 @@ class RecipeView {
     this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
-
+  updateServingsBtn(handler) {
+    this.#parentElement.addEventListener('click', e => {
+      const btn = e.target.closest('.btn--update-servings');
+      if (!btn) return;
+      const newServing = +btn.dataset.serving;
+      if (newServing > 0) handler(newServing);
+    });
+  }
   addHandlerRender(handler) {
     ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
   }
@@ -90,12 +131,16 @@ class RecipeView {
             <span class = "recipe__info-text">servings</span>
 
             <div    class = "recipe__info-buttons">
-            <button class = "btn--tiny btn--increase-servings">
+            <button data-serving = "${
+              this.#data.servings - 1
+            }"  class = "btn--tiny btn--update-servings">
                 <svg>
-                  <use href = "${icons}#icon-minus-circle"></use>
+                  <use  href = "${icons}#icon-minus-circle"></use>
                 </svg>
-              </button>
-              <button class = "btn--tiny btn--increase-servings">
+            </button>
+              <button data-serving = "${
+                this.#data.servings + 1
+              }"  class = "btn--tiny btn--update-servings">
                 <svg>
                   <use href = "${icons}#icon-plus-circle"></use>
                 </svg>
@@ -148,7 +193,7 @@ class RecipeView {
            <use href  = "${icons}#icon-check"></use>
            </svg>
            <div  class = "recipe__quantity">${
-             rec.quantity !== null ? new Fraction(rec.quantity).toString() : ''
+             rec.quantity ? new Fraction(rec.quantity).toString() : ''
            }</div>
            <div  class = "recipe__description">
            <span class = "recipe__unit">${rec.unit || ''}</span>

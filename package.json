@@ -2,7 +2,6 @@
   "name": "forkify",
   "version": "1.0.0",
   "description": "recipie application",
-  "default": "index.html",
   "scripts": {
     "start": "parcel index.html",
     "build": " parcel build index.html"
@@ -18,9 +17,8 @@
   },
   "homepage": "https://github.com/aaku2252/Jonas-final-forkify-project#readme",
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.2.1",
-    "parcel": "^2.2.1",
-    "sass": "^1.49.7"
+    "@parcel/transformer-sass": "^2.3.1",
+    "parcel": "^2.3.1"
   },
   "dependencies": {
     "core-js": "^3.21.0",

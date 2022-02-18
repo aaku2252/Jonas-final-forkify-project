@@ -44,7 +44,30 @@ class ResultView {
     this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
+  update(data) {
+    this.#data = data;
+    const newMarkup = this.#generateMarkup();
+    const newDom = document.createRange().createContextualFragment(newMarkup);
+    const newElement = Array.from(newDom.querySelectorAll('*'));
+    const curElement = Array.from(this.#parentElement.querySelectorAll('*'));
 
+    newElement.forEach((newEl, i) => {
+      const curEl = curElement[i];
+
+      if (
+        !newEl.isEqualNode(curEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
+        curEl.textContent = newEl.textContent;
+      }
+
+      if (!newEl.isEqualNode(curEl)) {
+        Array.from(newEl.attributes).forEach(attr => {
+          curEl.setAttribute(attr.name, attr.value);
+        });
+      }
+    });
+  }
   renderMsg(msg = this.#successMsg) {
     const markup = `<div class="message">
             <div>
@@ -61,8 +84,12 @@ class ResultView {
     return this.#data.map(this.#generateMarkupPreview).join('');
   }
   #generateMarkupPreview(data) {
+    const id = window.location.hash.slice(1);
+
     return `<li class="preview">
-             <a      class = "preview__link " href = "#${data.id}">
+             <a      class = "preview__link ${
+               data.id === id ? 'preview__link--active' : ''
+             } " href = "#${data.id}">
              <figure class = "preview__fig">
              <img    src   = "${data.image}" alt   = ${data.title} />
                </figure>
