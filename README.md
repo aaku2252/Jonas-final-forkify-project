@@ -17,3 +17,6 @@ render the selected result
 ////////////////////////////////////////////////////////////////
 
 Used the MVC architecture to manage the whole code and files to neat and understandable code
+
+////////////////////////////////////////////////////////////////
+Can use the inheritance and minimize the code but modular inheritance does not support the inheritance of private methods or property so used them as different. Most of the view features are common so we can use a single parent class and then inherit the methods form that class.
