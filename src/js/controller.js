@@ -7,6 +7,7 @@ import searchView from './view/searchView.js';
 import resultView from './view/resultView.js';
 import paginationView from './view/paginationView.js';
 import bookmarkView from './view/bookmarkView.js';
+import addRecipeView from './view/addRecipeView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -72,6 +73,23 @@ function loadBookmarkItems() {
   bookmarkView.render(model.state.bookmark);
 }
 
+async function controlUploadData(data) {
+  try {
+    addRecipeView.loadingSpinner();
+    await model.uploadData(data);
+    recipeView.render(model.state.recipe);
+    addRecipeView.renderMsg();
+    bookmarkView.render(model.state.bookmark);
+
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+    setTimeout(function () {
+      addRecipeView.toggleHidden();
+    }, 2500);
+  } catch (err) {
+    addRecipeView.renderError(err.msg);
+  }
+}
+
 function init() {
   bookmarkView.loadRenderHandler(loadBookmarkItems);
   recipeView.addHandlerRender(controlRecipes);
@@ -79,5 +97,6 @@ function init() {
   paginationView.addHandlerRender(controlPagination);
   recipeView.addBookmarkHandler(controlBookmark);
   recipeView.updateServingsBtn(controlServings);
+  addRecipeView.userRecipeData(controlUploadData);
 }
 init();

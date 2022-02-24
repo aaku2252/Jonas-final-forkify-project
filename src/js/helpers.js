@@ -18,3 +18,18 @@ export const getJson = async function (url) {
     throw err;
   }
 };
+export const sendJson = async function (url, recipeData) {
+  try {
+    const request = fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(recipeData),
+    });
+    const res = await Promise.race([timeout(TIMEOUT_SEC), request]);
+    const data = await res.json();
+    if (!res.ok) throw new Error(`Error is :${data.message} ${data.status}`);
+    return data.data;
+  } catch (err) {
+    throw err;
+  }
+};
